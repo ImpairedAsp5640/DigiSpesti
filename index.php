@@ -11,15 +11,16 @@ if (!isset($_SESSION['username'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - WealthWise</title>
+    <title>DigiSpesti</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="modal.css">
 </head>
 <body>
     <header class="header">
         <div class="container">
             <div class="logo">
                 <div class="logo-icon">$</div>
-                <span>WealthWise</span>
+                <span>DigiSpesti</span>
             </div>
             <nav class="nav">
                 <a href="#" class="nav-link">Dashboard</a>
@@ -39,13 +40,17 @@ if (!isset($_SESSION['username'])) {
                 <h1>Welcome back, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
                 <p>Here's an overview of your financial health</p>
             </div>
-            <button class="btn btn-primary">Ask Budget AI</button>
+            <button class="btn btn-primary" id="addPaymentBtn">Добави плащане</button>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-title">Total Balance</div>
-                <div class="stat-value">$24,563.00</div>
+                <div class="stat-value">
+                    <form action="">
+                        <input type="text" placeholder="Balance">
+                    </form>
+                </div>
                 <div class="stat-description">+$2,100 from last month</div>
             </div>
             
@@ -90,9 +95,83 @@ if (!isset($_SESSION['username'])) {
         </div>
     </main>
 
+    <!-- Payment Modal Overlay -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ДОБАВИ</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="income">ДОХОД</button>
+                <button class="tab-btn" data-tab="expense">РАЗХОД</button>
+                <button class="tab-btn" data-tab="savings">СПЕСТЯВАНЕ</button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label for="date">Дата: <span class="required">*</span></label>
+                        <input type="text" id="date" class="form-input" value="20 март 2025" readonly>
+                        <span class="check-mark">✓</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="amount">Сума: <span class="required">*</span></label>
+                        <input type="text" id="amount" class="form-input" placeholder="Пример: 100.00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comment">Коментар:</label>
+                        <textarea id="comment" class="form-input" placeholder="Пример: Сметка за ток"></textarea>
+                    </div>
+                    
+                    <button type="button" class="btn category-btn">Избери категория</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <footer class="container">
         <p>&copy; 2025 WealthWise. All rights reserved.</p>
     </footer>
+
+    <script>
+        // Modal functionality
+        const modal = document.getElementById('paymentModal');
+        const addPaymentBtn = document.getElementById('addPaymentBtn');
+        const closeModal = document.querySelector('.close-modal');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        
+        // Open modal when button is clicked
+        addPaymentBtn.addEventListener('click', function() {
+            modal.style.display = 'flex';
+        });
+        
+        // Close modal when X is clicked
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // Tab functionality
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabBtns.forEach(tab => tab.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // You can add logic here to show different form fields based on tab
+                const tabType = this.getAttribute('data-tab');
+                console.log('Selected tab:', tabType);
+            });
+        });
+    </script>
 </body>
 </html>
-
