@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - WealthWise</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">$</div>
+                <span>WealthWise</span>
+            </div>
+            <nav class="nav">
+                <a href="register.html" class="nav-link">Register</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="form-container">
+            <h1 class="text-center">Welcome Back</h1>
+            <p class="text-center">Enter your credentials to access your financial dashboard</p>
+            
+            <form action="login.php" method="POST">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" class="form-input" placeholder="Enter your username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            
+            <p class="text-center" style="margin-top: 24px;">
+                Don't have an account? <a href="register.html">Register here</a>
+            </p>
+        </div>
+    </main>
+
+    <footer class="container">
+        <p>&copy; 2025 WealthWise. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+
