@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+          background-image: url('savings.jpg');
+          background-repeat: no-repeat;
+          background-position: top-right;
+        }
+    </style>
+    <title>Спестявания</title>
+    <link rel="stylesheet" href="modal.css">
+</head>
+<body>
+    <h1>Спести, за да осъществиш мечтите си....</h1>
+    <div id="input-container">
+        <form action="">
+        </form>
+    </div>
+    <button style="color: black; background-color: #ffc300; width: 200px; height: 50px; border-radius: 4px;" onclick="addInput()">+ Започни ново спестяване</button>
+
+    <script>
+        function addInput() {
+            let newInput = document.createElement("input");
+            let newInputt = document.createElement("input");
+            newInput.type = "text";
+            newInput.placeholder = "За какво...";
+            newInputt.type = "number";
+            newInputt.placeholder = "Колко...";
+            document.getElementById("input-container").appendChild(newInput);
+            document.getElementById("input-container").appendChild(newInputt);
+        }
+    </script>
+</body>
+</html>
