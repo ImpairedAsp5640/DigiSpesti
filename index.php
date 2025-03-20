@@ -95,7 +95,6 @@ if (!isset($_SESSION['username'])) {
         </div>
     </main>
 
-    <!-- Payment Modal Overlay -->
     <div id="paymentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -125,7 +124,14 @@ if (!isset($_SESSION['username'])) {
                         <textarea id="comment" class="form-input" placeholder="Пример: Сметка за ток"></textarea>
                     </div>
                     
-                    <button type="button" class="btn category-btn">Избери категория</button>
+                    <div class="dropup">
+                    <button onclick="dropup()" class="dropbtn">DropUp</button>
+                    <div id="Dropup" class="dropup-content">
+                        <a href="#home">Home</a>
+                        <a href="#about">About</a>
+                        <a href="#contact">Contact</a>
+                    </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -136,38 +142,49 @@ if (!isset($_SESSION['username'])) {
     </footer>
 
     <script>
-        // Modal functionality
+
         const modal = document.getElementById('paymentModal');
         const addPaymentBtn = document.getElementById('addPaymentBtn');
         const closeModal = document.querySelector('.close-modal');
         const tabBtns = document.querySelectorAll('.tab-btn');
         
-        // Open modal when button is clicked
         addPaymentBtn.addEventListener('click', function() {
             modal.style.display = 'flex';
         });
-        
-        // Close modal when X is clicked
+
         closeModal.addEventListener('click', function() {
             modal.style.display = 'none';
         });
         
-        // Close modal when clicking outside
         window.addEventListener('click', function(event) {
             if (event.target === modal) {
                 modal.style.display = 'none';
             }
         });
+
+        function dropup() {
+            document.getElementById("Dropup").classList.toggle("show");
+        }
+
+        window.onclick = function(event) {
+        if (!event.target.matches('.dropbtn')) {
+            var dropdowns = document.getElementsByClassName("dropup-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+             openDropdown.classList.remove('show');
+            }
+        }}
+    }
         
-        // Tab functionality
         tabBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                // Remove active class from all tabs
+
                 tabBtns.forEach(tab => tab.classList.remove('active'));
-                // Add active class to clicked tab
+
                 this.classList.add('active');
                 
-                // You can add logic here to show different form fields based on tab
                 const tabType = this.getAttribute('data-tab');
                 console.log('Selected tab:', tabType);
             });
