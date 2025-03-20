@@ -423,3 +423,9 @@ footer {
 .dropup a:hover {background-color: #ddd;}
 
 .show {display: block;}
+
+.button {
+    border-radius: 4px;
+    background-color: #ffc300;
+    color: #1a1a1a;
+}

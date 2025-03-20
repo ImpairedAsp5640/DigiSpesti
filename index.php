@@ -24,7 +24,7 @@ if (!isset($_SESSION['username'])) {
             </div>
             <nav class="nav">
                 <a href="#" class="nav-link">Dashboard</a>
-                <a href="#" class="nav-link">Savings</a>
+                <a href="savings.html" class="nav-link">Savings</a>
                 <a href="#" class="nav-link">Investments</a>
                 <a href="#" class="nav-link">Budget AI</a>
                 <form action="logout.php" method="POST" style="display: inline;">
