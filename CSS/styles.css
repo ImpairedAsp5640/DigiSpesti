@@ -490,25 +490,22 @@ footer {
     grid-template-columns: repeat(2, 1fr);
 }
 
-/* Positive and negative change indicators */
 .positive-change {
-    color: #22c55e; /* Green color for positive changes */
+    color: #22c55e;
     font-weight: 600;
 }
 
 .negative-change {
-    color: #ef4444; /* Red color for negative changes */
+    color: #ef4444;
     font-weight: 600;
 }
 
-/* Responsive adjustment for two-card grid */
 @media (max-width: 768px) {
     .stats-grid-two {
         grid-template-columns: 1fr;
     }
 }
 
-/* Tip card styles (from previous update) */
 .tip-card {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     border-left: 3px solid #ffc300;
@@ -550,6 +547,6 @@ footer {
             text-align: center;
         }
 .logo-container img {
-            width: 150px; /* Adjust size as needed */
+            width: 150px;
             height: auto;
         }

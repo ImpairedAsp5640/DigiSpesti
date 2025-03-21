@@ -261,6 +261,7 @@ $categories = [
                 <a href="index.php" class="nav-link">Dashboard</a>
                 <a href="history.php" class="nav-link">History</a>
                 <a href="#" class="nav-link">Savings</a>
+                <a href="plan_budget.php" class="nav-link">Plan your budget</a>
                 <form action="logout.php" method="POST" style="display: inline; margin-left: 20px;">
                     <button type="submit" class="btn btn-outline">Log out</button>
                 </form>

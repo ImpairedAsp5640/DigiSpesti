@@ -1,19 +1,15 @@
 <?php
-// Database connection details
 $host = "database-1.cluster-cgnbwogrvdhe.eu-central-1.rds.amazonaws.com";
 $username = "impairedasp5640";
 $password = ">)0qTEMVW(19#)ez|2WF8RhupP21";
 $database = "database1";
 
-// Create connection
 $conn = new mysqli($host, $username, $password, $database);
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Create tables if they don't exist
 function createTables($conn) {
     // Users table
     $usersTable = "CREATE TABLE IF NOT EXISTS users (
@@ -47,6 +43,5 @@ function createTables($conn) {
     }
 }
 
-// Call the function to create tables
 createTables($conn);
 ?>

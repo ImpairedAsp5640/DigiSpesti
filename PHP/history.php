@@ -505,6 +505,7 @@ $currentDay = date('d');
                 <a href="index.php" class="nav-link">Dashboard</a>
                 <a href="history.php" class="nav-link">History</a>
                 <a href="#" class="nav-link">Savings</a>
+                <a href="plan_budget.php" class="nav-link">Plan your budget</a>
                 <form action="logout.php" method="POST" style="display: inline; margin-left: 20px;">
                     <button type="submit" class="btn btn-outline">Log out</button>
                 </form>
@@ -637,31 +638,6 @@ $currentDay = date('d');
             <?php endif; ?>
         </div>
 
-        <div class="budget-summary">
-            <div class="budget-column">
-                <div class="budget-label">Planned Balance: <span class="budget-help" title="This is your planned budget for the month">?</span></div>
-                <div class="budget-value"><?php echo number_format($plannedBudget, 2); ?></div>
-            </div>
-            <div class="budget-column">
-                <div class="budget-label">Actual Balance: <span class="budget-help" title="This is your actual balance based on transactions">?</span></div>
-                <div class="budget-value <?php echo ($actualBalance >= 0) ? 'positive' : 'negative'; ?>"><?php echo number_format($actualBalance, 2); ?></div>
-            </div>
-        </div>
-
-        <div class="budget-form">
-            <h3>Plan Your Monthly Budget</h3>
-            <form id="budgetForm" action="save_budget.php" method="POST">
-                <input type="hidden" name="month" value="<?php echo $currentMonth; ?>">
-                <input type="hidden" name="year" value="<?php echo $currentYear; ?>">
-                
-                <div class="form-group">
-                    <label for="plannedBudget">Planned Budget Amount:</label>
-                    <input type="text" id="plannedBudget" name="plannedBudget" class="form-input" value="<?php echo $plannedBudget; ?>" placeholder="Enter your planned budget for the month">
-                </div>
-                
-                <button type="submit" class="btn btn-primary">Save Budget Plan</button>
-            </form>
-        </div>
     </main>
 
     <div id="paymentModal" class="modal">

@@ -1,7 +1,6 @@
 <?php
 require_once 'config.php';
 
-// Create budget_plans table if it doesn't exist
 $createBudgetPlansTable = "CREATE TABLE IF NOT EXISTS budget_plans (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     user_id INT(11) NOT NULL,
