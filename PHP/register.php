@@ -102,7 +102,7 @@ if (isset($success)) {
         </main>
 
         <footer class="container">
-            <p>&copy; 2025 WealthWise. All rights reserved.</p>
+            <p>&copy; 2025 DigiSpesti. All rights reserved.</p>
         </footer>
     </body>
     </html>';
