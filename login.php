@@ -33,22 +33,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $conn->close();
 
-// If there was an error, display it
 if (isset($error)) {
     echo '<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login Error - WealthWise</title>
+        <title>Login Error - DigiSpesti</title>
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
         <header class="header">
             <div class="container">
-                <div class="logo">
-                    <div class="logo-icon">$</div>
-                    <span>WealthWise</span>
+                <div class="logo-container">
+                    <img src="image.png" alt="DigiSpesti Logo">
                 </div>
                 <nav class="nav">
                     <a href="register.html" class="nav-link">Register</a>
@@ -67,7 +65,7 @@ if (isset($error)) {
         </main>
 
         <footer class="container">
-            <p>&copy; 2025 WealthWise. All rights reserved.</p>
+            <p>&copy; 2025 DigiSpesti. All rights reserved.</p>
         </footer>
     </body>
     </html>';
