@@ -7,19 +7,17 @@ if (!isset($_SESSION['user_id'])) {
 
 require_once 'config.php';
 
-// Debug mode
 $debug = false;
 if ($debug) {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
     
     echo "<div style='background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 10px; margin-bottom: 20px;'>";
-    echo "<h3>Debug Information</h3>";
+    echo "<h3>Debug информация</h3>";
     echo "<p>User ID: " . $_SESSION['user_id'] . "</p>";
-    echo "<p>Month: " . (isset($_GET['month']) ? $_GET['month'] : date('m')) . "</p>";
-    echo "<p>Year: " . (isset($_GET['year']) ? $_GET['year'] : date('Y')) . "</p>";
+    echo "<p>Месец: " . (isset($_GET['month']) ? $_GET['month'] : date('m')) . "</p>";
+    echo "<p>Година: " . (isset($_GET['year']) ? $_GET['year'] : date('Y')) . "</p>";
     
-    // Check database connection
     echo "<p>Database connection: ";
     if ($conn && !$conn->connect_error) {
         echo "<span style='color:green'>Connected</span>";
@@ -28,7 +26,6 @@ if ($debug) {
     }
     echo "</p>";
     
-    // Check if budget_plans table exists
     $tableCheckQuery = "SHOW TABLES LIKE 'budget_plans'";
     $result = $conn->query($tableCheckQuery);
     echo "<p>budget_plans table: ";
@@ -39,7 +36,6 @@ if ($debug) {
     }
     echo "</p>";
     
-    // Check if budget_plan_items table exists
     $tableCheckQuery = "SHOW TABLES LIKE 'budget_plan_items'";
     $result = $conn->query($tableCheckQuery);
     echo "<p>budget_plan_items table: ";
@@ -50,7 +46,6 @@ if ($debug) {
     }
     echo "</p>";
     
-    // Check if budget_plan_items has data for this user/month/year
     $checkItemsQuery = "SELECT COUNT(*) as item_count FROM budget_plan_items WHERE user_id = ? AND month = ? AND year = ?";
     $stmt = $conn->prepare($checkItemsQuery);
     $stmt->bind_param("iii", $userId, $month, $year);
@@ -62,7 +57,6 @@ if ($debug) {
     echo $itemCount > 0 ? "<span style='color:green'>{$itemCount} items found</span>" : "<span style='color:red'>No items found</span>";
     echo "</p>";
     
-    // Check if there are any items with category "0"
     $checkZeroCategoryQuery = "SELECT COUNT(*) as zero_count FROM budget_plan_items WHERE user_id = ? AND month = ? AND year = ? AND category = '0'";
     $stmt = $conn->prepare($checkZeroCategoryQuery);
     $stmt->bind_param("iii", $userId, $month, $year);
@@ -77,10 +71,7 @@ if ($debug) {
     echo "</div>";
 }
 
-// Add this code to ensure the budget_plans and budget_plan_items tables exist
-// Check and create necessary tables
 function ensureBudgetTablesExist($conn) {
-    // Create budget_plans table if it doesn't exist
     $createBudgetPlansTable = "CREATE TABLE IF NOT EXISTS budget_plans (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
         user_id INT(11) NOT NULL,
@@ -97,7 +88,6 @@ function ensureBudgetTablesExist($conn) {
     
     $conn->query($createBudgetPlansTable);
     
-    // Create budget_plan_items table if it doesn't exist
     $createBudgetPlanItemsTable = "CREATE TABLE IF NOT EXISTS budget_plan_items (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
         user_id INT(11) NOT NULL,
@@ -115,21 +105,17 @@ function ensureBudgetTablesExist($conn) {
     $conn->query($createBudgetPlanItemsTable);
 }
 
-// Call the function to ensure tables exist
 ensureBudgetTablesExist($conn);
 
 $userId = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 
-// Check if we need to highlight a specific category from a warning
 $highlightCategory = isset($_GET['highlight']) ? $_GET['highlight'] : '';
 
-// Get current month and year
 $month = isset($_GET['month']) ? intval($_GET['month']) : date('m');
 $year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
 $currentMonthName = date('F Y', strtotime("$year-$month-01"));
 
-// Get planned budget for the current month
 $budgetQuery = "SELECT * FROM budget_plans WHERE user_id = ? AND month = ? AND year = ?";
 $stmt = $conn->prepare($budgetQuery);
 $stmt->bind_param("iii", $userId, $month, $year);
@@ -137,12 +123,10 @@ $stmt->execute();
 $result = $stmt->get_result();
 $budgetPlan = $result->fetch_assoc();
 
-// Default values if no budget plan exists
 $plannedIncome = $budgetPlan['income'] ?? 0;
 $plannedExpenses = $budgetPlan['expenses'] ?? 0;
 $plannedSavings = $budgetPlan['savings'] ?? 0;
 
-// Get actual income, expenses, and savings for the month
 $actualQuery = "SELECT 
                 SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as actual_income,
                 SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as actual_expenses,
@@ -159,11 +143,9 @@ $actualIncome = $actualData['actual_income'] ?? 0;
 $actualExpenses = $actualData['actual_expenses'] ?? 0;
 $actualSavings = $actualData['actual_savings'] ?? 0;
 
-// Calculate planned and actual balance
 $plannedBalance = $plannedIncome - $plannedExpenses;
 $actualBalance = $actualIncome - $actualExpenses;
 
-// Get expense categories and their planned amounts
 $expenseCategoriesQuery = "SELECT category, amount FROM budget_plan_items 
                           WHERE user_id = ? AND month = ? AND year = ? AND type = 'expense'";
 $stmt = $conn->prepare($expenseCategoriesQuery);
@@ -176,41 +158,37 @@ while ($row = $expenseCategoriesResult->fetch_assoc()) {
     $expenseCategories[$row['category']] = $row['amount'];
 }
 
-// Remove any "0" category if it exists
 if (isset($expenseCategories["0"])) {
     unset($expenseCategories["0"]);
 }
 
-// Default expense categories if none exist
 $defaultExpenseCategories = [
-    'Utilities' => 0,
-    'Housing' => 0,
-    'Groceries' => 0,
-    'Transport' => 0,
-    'Car' => 0,
-    'Kids' => 0,
-    'Clothing' => 0,
-    'Personal' => 0,
-    'Cigarettes & alcohol' => 0,
-    'Fun' => 0,
-    'Eating out' => 0,
-    'Education' => 0,
-    'Gifts' => 0,
-    'Sport/Hobby' => 0,
-    'Travel/Leisure' => 0,
-    'Medical' => 0,
-    'Pets' => 0,
-    'Miscellaneous' => 0
+    'Битови сметки' => 0,
+    'Жилище' => 0,
+    'Храна и консулмативи' => 0,
+    'Транспорт' => 0,
+    'Автомобил' => 0,
+    'Деца' => 0,
+    'Дрехи и обувки' => 0,
+    'Лични' => 0,
+    'Цигари и алкохол' => 0,
+    'Развлечения' => 0,
+    'Хранене навън' => 0,
+    'Образование' => 0,
+    'Подаръци' => 0,
+    'Спорт/Хоби' => 0,
+    'Пътуване/Отдих' => 0,
+    'Медицински' => 0,
+    'Домашни любимци' => 0,
+    'Разни' => 0
 ];
 
-// Merge default categories with existing ones
 foreach ($defaultExpenseCategories as $category => $amount) {
     if (!isset($expenseCategories[$category])) {
         $expenseCategories[$category] = $amount;
     }
 }
 
-// Get income categories and their planned amounts
 $incomeCategoriesQuery = "SELECT category, amount FROM budget_plan_items 
                          WHERE user_id = ? AND month = ? AND year = ? AND type = 'income'";
 $stmt = $conn->prepare($incomeCategoriesQuery);
@@ -223,31 +201,26 @@ while ($row = $incomeCategoriesResult->fetch_assoc()) {
     $incomeCategories[$row['category']] = $row['amount'];
 }
 
-// Remove any "0" category if it exists
 if (isset($incomeCategories["0"])) {
     unset($incomeCategories["0"]);
 }
 
-// Default income categories
 $defaultIncomeCategories = [
-    'Salary' => 0,
-    'Previous month balance' => 0
+    'Заплата' => 0,
+    'Баланс от предходен месец' => 0
 ];
 
-// Merge default categories with existing ones
 foreach ($defaultIncomeCategories as $category => $amount) {
     if (!isset($incomeCategories[$category])) {
         $incomeCategories[$category] = $amount;
     }
 }
 
-// Navigation for previous/next month
 $prevMonth = $month == 1 ? 12 : $month - 1;
 $prevYear = $month == 1 ? $year - 1 : $year;
 $nextMonth = $month == 12 ? 1 : $month + 1;
 $nextYear = $month == 12 ? $year + 1 : $year;
 
-// Check for budget warnings
 $warningsQuery = "SELECT e.category, bpi.amount as planned_amount, 
                  SUM(e.amount) as spent_amount,
                  (bpi.amount - SUM(e.amount)) as remaining
@@ -301,7 +274,7 @@ while ($row = $warningsResult->fetch_assoc()) {
         
         .chart-wrapper {
             position: relative;
-            height: 300px; /* Fixed height for chart */
+            height: 300px;
             width: 100%;
             margin: 0 auto;
         }
@@ -467,7 +440,6 @@ while ($row = $warningsResult->fetch_assoc()) {
             background-color: #fffbeb;
         }
         
-        /* Animation for graph updates */
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -478,7 +450,6 @@ while ($row = $warningsResult->fetch_assoc()) {
             animation: pulse 0.5s ease-in-out;
         }
         
-        /* Tooltip styles */
         .tooltip {
             position: absolute;
             background-color: rgba(0, 0, 0, 0.8);
@@ -496,7 +467,6 @@ while ($row = $warningsResult->fetch_assoc()) {
             opacity: 1;
         }
         
-        /* Warning styles */
         .warning-container {
             margin-bottom: 20px;
         }
@@ -529,7 +499,6 @@ while ($row = $warningsResult->fetch_assoc()) {
             margin-left: 5px;
         }
         
-        /* Responsive styles */
         @media (max-width: 768px) {
             .budget-charts {
                 flex-direction: column;
@@ -554,15 +523,16 @@ while ($row = $warningsResult->fetch_assoc()) {
     <header class="header">
         <div class="container">
             <div class="logo-container">
-                <img src="image.png" alt="DigiSpesti Logo">
+                <a href="./index.php"><img src="image.png" alt="DigiSpesti Logo"></a>
             </div>
             <nav class="nav">
-                <a href="index.php" class="nav-link">Dashboard</a>
-                <a href="history.php" class="nav-link">History</a>
-                <a href="savings.php" class="nav-link">Savings</a>
-                <a href="plan_budget.php" class="nav-link">Plan your budget</a>
+                <a href="index.php" class="nav-link">Начална страница</a>
+                <a href="history.php" class="nav-link">Плащания</a>
+                <a href="savings.php" class="nav-link">Спестявания</a>
+                <a href="plan_budget.php" class="nav-link">Бюджет</a>
+                <a href="product_promotions.php" class="nav-link">Промоции</a>
                 <form action="logout.php" method="POST" style="display: inline; margin-left: 20px;">
-                    <button type="submit" class="btn btn-outline">Log out</button>
+                    <button type="submit" class="btn btn-outline">Излизане</button>
                 </form>
             </nav>
         </div>
@@ -589,10 +559,10 @@ while ($row = $warningsResult->fetch_assoc()) {
         
         <div class="dashboard-header">
             <div>
-                <h1>My Budgets</h1>
-                <p>Plan and track your monthly budget</p>
+                <h1>Моят бюджет</h1>
+                <p>Планирайте и следете месечния си баланс</p>
             </div>
-            <button class="btn btn-primary" id="editBudgetBtn">EDIT BUDGET</button>
+            <button class="btn btn-primary" id="editBudgetBtn">Промени бюджета си</button>
         </div>
         
         <div class="month-navigation">
@@ -606,11 +576,11 @@ while ($row = $warningsResult->fetch_assoc()) {
             <?php foreach ($warnings as $warning): ?>
             <div class="warning-item">
                 <div>
-                    <strong>Warning:</strong> You've spent <?php echo number_format($warning['spent_amount'], 2); ?> on <?php echo $warning['category']; ?> 
-                    (<?php echo round(($warning['spent_amount'] / $warning['planned_amount']) * 100); ?>% of your budget).
-                    Remaining: <?php echo number_format($warning['remaining'], 2); ?>
+                    <strong>Внимание:</strong> Вие сте похарчили <?php echo number_format($warning['spent_amount'], 2); ?> от <?php echo $warning['category']; ?> 
+                    (<?php echo round(($warning['spent_amount'] / $warning['planned_amount']) * 100); ?>% от бюджета Ви).
+                    Остават: <?php echo number_format($warning['remaining'], 2); ?>
                 </div>
-                <button class="warning-action" data-category="<?php echo $warning['category']; ?>">Adjust Budget</button>
+                <button class="warning-action" data-category="<?php echo $warning['category']; ?>">Променете бюджета си</button>
             </div>
             <?php endforeach; ?>
         </div>
@@ -618,7 +588,7 @@ while ($row = $warningsResult->fetch_assoc()) {
         
         <div class="budget-charts">
             <div class="chart-container">
-                <div class="chart-title">INCOME BREAKDOWN</div>
+                <div class="chart-title">Доходи</div>
                 <div class="chart-total" id="incomeTotalDisplay"><?php echo number_format($plannedIncome, 2); ?></div>
                 <div class="chart-wrapper">
                     <canvas id="incomeChart"></canvas>
@@ -626,7 +596,7 @@ while ($row = $warningsResult->fetch_assoc()) {
             </div>
             
             <div class="chart-container">
-                <div class="chart-title">EXPENSE BREAKDOWN</div>
+                <div class="chart-title">Разходи</div>
                 <div class="chart-total" id="expenseTotalDisplay"><?php echo number_format($plannedExpenses, 2); ?></div>
                 <div class="chart-wrapper">
                     <canvas id="expenseChart"></canvas>
@@ -636,13 +606,13 @@ while ($row = $warningsResult->fetch_assoc()) {
         
         <div class="budget-balance">
             <div class="balance-card">
-                <div class="balance-title">Planned Balance:</div>
+                <div class="balance-title">Планиран баланс:</div>
                 <div class="balance-amount" id="plannedBalanceAmount"><?php echo number_format($plannedBalance, 2); ?></div>
                 <div class="balance-help" title="Planned balance = Income - Expenses - Savings">?</div>
             </div>
             
             <div class="balance-card">
-                <div class="balance-title">Actual Balance:</div>
+                <div class="balance-title">Реален баланс:</div>
                 <div class="balance-amount" id="actualBalanceAmount"><?php echo number_format($actualBalance, 2); ?></div>
                 <div class="balance-help" title="Actual balance = Actual Income - Actual Expenses - Actual Savings">?</div>
             </div>
@@ -654,7 +624,7 @@ while ($row = $warningsResult->fetch_assoc()) {
             
             <div class="budget-section">
                 <div class="budget-header">
-                    <h3>INCOME</h3>
+                    <h3>ДОХОДИ</h3>
                     <div class="total" id="incomeTotalHeader"><?php echo number_format($plannedIncome, 2); ?></div>
                 </div>
                 
@@ -672,7 +642,7 @@ while ($row = $warningsResult->fetch_assoc()) {
                         </div>
                         <div class="budget-item-amount">
                             <input type="text" name="income[<?php echo $category; ?>]" value="<?php echo $amount; ?>" readonly data-category="<?php echo $category; ?>" class="income-input">
-                            <button type="button" class="edit-btn">edit</button>
+                            <button type="button" class="edit-btn">редактирай</button>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -681,7 +651,7 @@ while ($row = $warningsResult->fetch_assoc()) {
             
             <div class="budget-section">
                 <div class="budget-header">
-                    <h3>EXPENSES</h3>
+                    <h3>Разходи</h3>
                     <div class="total" id="expenseTotalHeader"><?php echo number_format($plannedExpenses, 2); ?></div>
                 </div>
                 
@@ -699,7 +669,7 @@ while ($row = $warningsResult->fetch_assoc()) {
                         </div>
                         <div class="budget-item-amount">
                             <input type="text" name="expense[<?php echo $category; ?>]" value="<?php echo $amount; ?>" readonly data-category="<?php echo $category; ?>" class="expense-input">
-                            <button type="button" class="edit-btn">edit</button>
+                            <button type="button" class="edit-btn">редактирай</button>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -707,7 +677,7 @@ while ($row = $warningsResult->fetch_assoc()) {
             </div>
             
             
-            <button type="submit" class="btn btn-primary save-budget-btn" style="display: none;">SAVE BUDGET</button>
+            <button type="submit" class="btn btn-primary save-budget-btn" style="display: none;">Запазете бюджета</button>
         </form>
     </main>
 
@@ -716,14 +686,11 @@ while ($row = $warningsResult->fetch_assoc()) {
     </footer>
 
     <script>
-        // Check if we need to highlight a specific category from a warning
         const highlightCategory = "<?php echo addslashes($highlightCategory); ?>";
         if (highlightCategory) {
-            // Find the input for this category
             const input = document.querySelector(`input[data-category="${highlightCategory}"]`);
             
             if (input) {
-                // Enable edit mode if not already enabled
                 if (!isEditMode) {
                     isEditMode = true;
                     budgetForm.classList.add('budget-edit-mode');
@@ -734,17 +701,14 @@ while ($row = $warningsResult->fetch_assoc()) {
                     editBudgetBtn.textContent = 'CANCEL';
                 }
                 
-                // Scroll to the input
                 setTimeout(() => {
                     input.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     
-                    // Highlight the input
                     input.style.backgroundColor = '#fffacd';
                     setTimeout(() => {
                         input.style.backgroundColor = '';
                     }, 2000);
                     
-                    // Focus and select the input
                     input.focus();
                     input.select();
                 }, 500);
@@ -768,11 +732,9 @@ while ($row = $warningsResult->fetch_assoc()) {
             const actualBalanceAmount = document.getElementById('actualBalanceAmount');
             const warningActions = document.querySelectorAll('.warning-action');
             
-            // Chart.js configuration
             const incomeChartCtx = document.getElementById('incomeChart').getContext('2d');
             const expenseChartCtx = document.getElementById('expenseChart').getContext('2d');
             
-            // Color palettes for charts
             const incomeColors = [
                 '#a8e6cf', '#dcedc1', '#ffd3b6', '#ffaaa5', '#ff8b94',
                 '#b8f2e6', '#aed9e0', '#ffa69e', '#faf3dd', '#e8d2ae'
@@ -783,7 +745,6 @@ while ($row = $warningsResult->fetch_assoc()) {
                 '#9bf6ff', '#bdb2ff', '#ffc6ff', '#fdffb6', '#a0c4ff'
             ];
             
-            // Initialize charts with optimized configuration
             let incomeChart = new Chart(incomeChartCtx, {
                 type: 'pie',
                 data: {
@@ -798,7 +759,7 @@ while ($row = $warningsResult->fetch_assoc()) {
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
-                        duration: 500 // Shorter animation for better performance
+                        duration: 500
                     },
                     layout: {
                         padding: 20
@@ -862,7 +823,7 @@ while ($row = $warningsResult->fetch_assoc()) {
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
-                        duration: 500 // Shorter animation for better performance
+                        duration: 500
                     },
                     layout: {
                         padding: 20
@@ -912,49 +873,42 @@ while ($row = $warningsResult->fetch_assoc()) {
                 }
             });
             
-            // Initial values
             let isEditMode = false;
             let actualBalance = parseFloat('<?php echo $actualBalance; ?>');
-            let updateTimeout = null; // For debouncing updates
+            let updateTimeout = null;
             
-            // Toggle edit mode
             editBudgetBtn.addEventListener('click', function() {
                 isEditMode = !isEditMode;
                 budgetForm.classList.toggle('budget-edit-mode');
                 
                 if (isEditMode) {
-                    // Enable editing
                     inputs.forEach(input => {
                         input.readOnly = false;
                     });
                     saveButton.style.display = 'block';
-                    editBudgetBtn.textContent = 'CANCEL';
+                    editBudgetBtn.textContent = 'Откажете';
                 } else {
-                    // Disable editing
                     inputs.forEach(input => {
                         input.readOnly = true;
                     });
                     saveButton.style.display = 'none';
-                    editBudgetBtn.textContent = 'EDIT BUDGET';
+                    editBudgetBtn.textContent = 'Променете бюджета';
                     
-                    // Reset form if canceled
                     budgetForm.reset();
                     updateTotals();
                 }
             });
             
-            // Individual edit buttons
             editButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     if (!isEditMode) {
-                        // Enable edit mode if not already enabled
                         isEditMode = true;
                         budgetForm.classList.add('budget-edit-mode');
                         inputs.forEach(input => {
                             input.readOnly = false;
                         });
                         saveButton.style.display = 'block';
-                        editBudgetBtn.textContent = 'CANCEL';
+                        editBudgetBtn.textContent = 'Откажете';
                     }
                     
                     const input = this.previousElementSibling;
@@ -963,16 +917,13 @@ while ($row = $warningsResult->fetch_assoc()) {
                 });
             });
             
-            // Warning action buttons
             warningActions.forEach(button => {
                 button.addEventListener('click', function() {
                     const category = this.getAttribute('data-category');
                     
-                    // Find the input for this category
                     const input = document.querySelector(`input[data-category="${category}"]`);
                     
                     if (input) {
-                        // Enable edit mode if not already enabled
                         if (!isEditMode) {
                             isEditMode = true;
                             budgetForm.classList.add('budget-edit-mode');
@@ -980,19 +931,16 @@ while ($row = $warningsResult->fetch_assoc()) {
                                 input.readOnly = false;
                             });
                             saveButton.style.display = 'block';
-                            editBudgetBtn.textContent = 'CANCEL';
+                            editBudgetBtn.textContent = 'Откажете';
                         }
                         
-                        // Scroll to the input
                         input.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         
-                        // Highlight the input
                         input.style.backgroundColor = '#fffacd';
                         setTimeout(() => {
                             input.style.backgroundColor = '';
                         }, 2000);
                         
-                        // Focus and select the input
                         setTimeout(() => {
                             input.focus();
                             input.select();
@@ -1001,10 +949,8 @@ while ($row = $warningsResult->fetch_assoc()) {
                 });
             });
             
-            // Calculate totals when inputs change - with debounce for better performance
             inputs.forEach(input => {
                 input.addEventListener('input', function() {
-                    // Debounce the update to prevent lag
                     if (updateTimeout) {
                         clearTimeout(updateTimeout);
                     }
@@ -1018,7 +964,6 @@ while ($row = $warningsResult->fetch_assoc()) {
                 });
                 
                 input.addEventListener('blur', function() {
-                    // Format the number
                     if (this.value) {
                         const value = parseFloat(this.value.replace(',', '.'));
                         if (!isNaN(value)) {
@@ -1033,7 +978,6 @@ while ($row = $warningsResult->fetch_assoc()) {
                 let totalIncome = 0;
                 let totalExpenses = 0;
                 
-                // Calculate income total
                 incomeInputs.forEach(input => {
                     const value = parseFloat(input.value.replace(',', '.'));
                     if (!isNaN(value)) {
@@ -1041,7 +985,6 @@ while ($row = $warningsResult->fetch_assoc()) {
                     }
                 });
                 
-                // Calculate expense total
                 expenseInputs.forEach(input => {
                     const value = parseFloat(input.value.replace(',', '.'));
                     
@@ -1050,19 +993,16 @@ while ($row = $warningsResult->fetch_assoc()) {
                     }
                 });
                 
-                // Update totals in the UI
                 incomeTotalDisplay.textContent = totalIncome.toFixed(2);
                 expenseTotalDisplay.textContent = totalExpenses.toFixed(2);
                 incomeTotalHeader.textContent = totalIncome.toFixed(2);
                 expenseTotalHeader.textContent = totalExpenses.toFixed(2);
                 
-                // Add pulse animation to totals
                 incomeTotalDisplay.classList.add('pulse');
                 expenseTotalDisplay.classList.add('pulse');
                 incomeTotalHeader.classList.add('pulse');
                 expenseTotalHeader.classList.add('pulse');
                 
-                // Remove animation after it completes
                 setTimeout(() => {
                     incomeTotalDisplay.classList.remove('pulse');
                     expenseTotalDisplay.classList.remove('pulse');
@@ -1070,21 +1010,17 @@ while ($row = $warningsResult->fetch_assoc()) {
                     expenseTotalHeader.classList.remove('pulse');
                 }, 500);
                 
-                // Update planned balance
                 const plannedBalance = totalIncome - totalExpenses;
                 plannedBalanceAmount.textContent = plannedBalance.toFixed(2);
                 
-                // Add pulse animation to balance
                 plannedBalanceAmount.classList.add('pulse');
                 setTimeout(() => {
                     plannedBalanceAmount.classList.remove('pulse');
                 }, 500);
                 
-                // Update category percentages
                 updateCategoryPercentages('income', totalIncome);
                 updateCategoryPercentages('expense', totalExpenses);
                 
-                // Update charts
                 updateCharts(totalIncome, totalExpenses);
             }
             
@@ -1104,7 +1040,6 @@ while ($row = $warningsResult->fetch_assoc()) {
             }
             
             function updateCharts(totalIncome, totalExpenses) {
-                // Update income chart - only include non-zero values
                 const incomeLabels = [];
                 const incomeData = [];
                 
@@ -1118,14 +1053,12 @@ while ($row = $warningsResult->fetch_assoc()) {
                     }
                 });
                 
-                // Only update if we have data to show
                 if (incomeData.length > 0) {
                     incomeChart.data.labels = incomeLabels;
                     incomeChart.data.datasets[0].data = incomeData;
                     incomeChart.update();
                 }
                 
-                // Update expense chart - only include non-zero values
                 const expenseLabels = [];
                 const expenseData = [];
                 
@@ -1139,7 +1072,6 @@ while ($row = $warningsResult->fetch_assoc()) {
                     }
                 });
                 
-                // Only update if we have data to show
                 if (expenseData.length > 0) {
                     expenseChart.data.labels = expenseLabels;
                     expenseChart.data.datasets[0].data = expenseData;
@@ -1147,73 +1079,59 @@ while ($row = $warningsResult->fetch_assoc()) {
                 }
             }
             
-            // Handle form submission with AJAX to prevent page reload
             budgetForm.addEventListener('submit', function(e) {
                 if (!isEditMode) {
-                    return; // Don't submit if not in edit mode
+                    return;
                 }
                 
                 e.preventDefault();
                 
                 const formData = new FormData(this);
                 
-                // Log form data for debugging
                 console.log("Submitting form data:");
                 for (let pair of formData.entries()) {
                     console.log(pair[0] + ': ' + pair[1]);
                 }
                 
-                // Set the AJAX header
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', 'save_budget_plan.php', true);
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                 
-                // Modify the JavaScript form submission to better handle the response
-                // Replace the xhr.onload function in the form submission event listener with this improved version:
                 xhr.onload = function() {
                     if (xhr.status === 200) {
                         console.log("Response:", xhr.responseText);
                         
-                        // Check if the response contains "success"
                         if (xhr.responseText.includes("success")) {
-                            // Show success message
                             const successAlert = document.createElement('div');
                             successAlert.className = 'alert alert-success';
                             successAlert.textContent = 'Budget plan saved successfully!';
                             
-                            // Insert alert at the top of the main content
                             const mainContent = document.querySelector('main.container');
                             mainContent.insertBefore(successAlert, mainContent.firstChild);
                             
-                            // Remove alert after 3 seconds
                             setTimeout(() => {
                                 successAlert.remove();
                             }, 3000);
                             
-                            // Exit edit mode
                             isEditMode = false;
                             budgetForm.classList.remove('budget-edit-mode');
                             inputs.forEach(input => {
                                 input.readOnly = true;
                             });
                             saveButton.style.display = 'none';
-                            editBudgetBtn.textContent = 'EDIT BUDGET';
+                            editBudgetBtn.textContent = 'Поправете бюджета';
                             
-                            // Reload the page after a short delay to show the updated data
                             setTimeout(() => {
                                 window.location.reload();
                             }, 1000);
                         } else {
-                            // Show error message with the response text
                             const errorAlert = document.createElement('div');
                             errorAlert.className = 'alert alert-error';
-                            errorAlert.textContent = 'Error saving budget plan: ' + xhr.responseText;
+                            errorAlert.textContent = 'Възникна грешка при запазването на бюджетния план:: ' + xhr.responseText;
                             
-                            // Insert alert at the top of the main content
                             const mainContent = document.querySelector('main.container');
                             mainContent.insertBefore(errorAlert, mainContent.firstChild);
                             
-                            // Remove alert after 5 seconds
                             setTimeout(() => {
                                 errorAlert.remove();
                             }, 5000);
@@ -1221,16 +1139,13 @@ while ($row = $warningsResult->fetch_assoc()) {
                     } else {
                         console.error('Error:', xhr.statusText);
                         
-                        // Show error message
                         const errorAlert = document.createElement('div');
                         errorAlert.className = 'alert alert-error';
-                        errorAlert.textContent = 'Error saving budget plan. Server returned status: ' + xhr.status;
+                        errorAlert.textContent = 'Възникна грешка при запазването на бюджетния план. Server returned status: ' + xhr.status;
                         
-                        // Insert alert at the top of the main content
                         const mainContent = document.querySelector('main.container');
                         mainContent.insertBefore(errorAlert, mainContent.firstChild);
                         
-                        // Remove alert after 5 seconds
                         setTimeout(() => {
                             errorAlert.remove();
                         }, 5000);
@@ -1240,16 +1155,13 @@ while ($row = $warningsResult->fetch_assoc()) {
                 xhr.onerror = function() {
                     console.error('Request error');
                     
-                    // Show error message
                     const errorAlert = document.createElement('div');
                     errorAlert.className = 'alert alert-error';
-                    errorAlert.textContent = 'Network error. Please check your connection and try again.';
+                    errorAlert.textContent = 'Network error. Моля проверете вашата връзка.';
                     
-                    // Insert alert at the top of the main content
                     const mainContent = document.querySelector('main.container');
                     mainContent.insertBefore(errorAlert, mainContent.firstChild);
                     
-                    // Remove alert after 3 seconds
                     setTimeout(() => {
                         errorAlert.remove();
                     }, 3000);
@@ -1258,19 +1170,16 @@ while ($row = $warningsResult->fetch_assoc()) {
                 xhr.send(formData);
             });
             
-            // Add keyboard navigation for inputs
             inputs.forEach(input => {
                 input.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         
-                        // Find the next input to focus
                         const currentIndex = Array.from(inputs).indexOf(this);
                         const nextInput = inputs[currentIndex + 1] || inputs[0];
                         nextInput.focus();
                     }
                     
-                    // Allow navigation with arrow keys
                     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
                         e.preventDefault();
                         
@@ -1288,7 +1197,6 @@ while ($row = $warningsResult->fetch_assoc()) {
                 });
             });
             
-            // Format numbers on page load
             inputs.forEach(input => {
                 if (input.value) {
                     const value = parseFloat(input.value);
@@ -1298,10 +1206,8 @@ while ($row = $warningsResult->fetch_assoc()) {
                 }
             });
             
-            // Initial update of totals and charts
             updateTotals();
             
-            // Force resize event to ensure charts render properly
             window.addEventListener('load', function() {
                 setTimeout(function() {
                     window.dispatchEvent(new Event('resize'));

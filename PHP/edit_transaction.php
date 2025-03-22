@@ -40,20 +40,19 @@ $comment = $transaction['comment'];
 $date = date('d F Y', strtotime($transaction['transaction_date']));
 
 $categories = [
-    'income' => ['Salary', 'Previous month balance'],
-    'expense' => ['Utilities', 'Housing', 'Groceries', 'Transport', 'Car', 'Kids', 'Clothing', 
-                 'Personal', 'Cigarettes & alcohol', 'Fun', 'Eating out', 'Education', 
-                 'Gifts', 'Sport/Hobby', 'Travel/Leisure', 'Medical', 'Pets', 'Miscellaneous'],
-    'savings' => ['Emergency Fund', 'Retirement', 'Vacation', 'Education', 'Home Purchase']
+                'income' => ['Заплата', 'Баланс от предходен месец'],
+                'expense' => ['Битови сметки', 'Жилище', 'Храна и консумативи', 'Транспорт', 'Автомобил', 'Деца', 'Дрехи и обувки', 
+                     'Лични', 'Цигари и алкохол', 'Развлечения', 'Хранене навън', 'Образование', 
+                     'Подаръци', 'Спорт/Хоби', 'Пътуване/Отдих', 'Медицински', 'Домашни любимци', 'Разни'],
+            'savings' => ['Непредвидени разходи', 'Пенсиониране', 'Ваканция', 'Образование', 'Купуване на къща']
 ];
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Transaction - DigiSpesti</title>
+    <title>Поправи транзакция - DigiSpesti</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="modal.css">
     <style>
@@ -258,12 +257,13 @@ $categories = [
                 <img src="image.png" alt="DigiSpesti Logo">
             </div>
             <nav class="nav">
-                <a href="index.php" class="nav-link">Dashboard</a>
-                <a href="history.php" class="nav-link">History</a>
-                <a href="#" class="nav-link">Savings</a>
-                <a href="plan_budget.php" class="nav-link">Plan your budget</a>
+                <a href="index.php" class="nav-link">Начална страница</a>
+                <a href="history.php" class="nav-link">Плащания</a>
+                <a href="savings.php" class="nav-link">Спестявания</a>
+                <a href="plan_budget.php" class="nav-link">Бюджет</a>
+                <a href="product_promotions.php" class="nav-link">Промоции</a>
                 <form action="logout.php" method="POST" style="display: inline; margin-left: 20px;">
-                    <button type="submit" class="btn btn-outline">Log out</button>
+                    <button type="submit" class="btn btn-outline">Излезте</button>
                 </form>
             </nav>
         </div>
@@ -281,14 +281,14 @@ $categories = [
         
         <div class="edit-form">
             <div class="form-header">
-                <h1>Edit Transaction</h1>
-                <p>Update the details of your transaction</p>
+                <h1>Редактирайте транзакцията</h1>
+                <p>Актуализирайте Вашата транзакция</p>
             </div>
             
             <div class="tab-container">
-                <div class="tab <?php echo ($transactionType == 'income') ? 'active' : ''; ?>" data-tab="income">INCOME</div>
-                <div class="tab <?php echo ($transactionType == 'expense') ? 'active' : ''; ?>" data-tab="expense">EXPENSE</div>
-                <div class="tab <?php echo ($transactionType == 'savings') ? 'active' : ''; ?>" data-tab="savings">SAVING</div>
+                <div class="tab <?php echo ($transactionType == 'income') ? 'active' : ''; ?>" data-tab="income">ДОХОД</div>
+                <div class="tab <?php echo ($transactionType == 'expense') ? 'active' : ''; ?>" data-tab="expense">РАЗХОД</div>
+                <div class="tab <?php echo ($transactionType == 'savings') ? 'active' : ''; ?>" data-tab="savings">СПЕСТЯВАНЕ</div>
             </div>
             
             <form id="editForm" action="update_transaction.php" method="POST">
@@ -297,7 +297,7 @@ $categories = [
                 <input type="hidden" id="selectedCategory" name="selectedCategory" value="<?php echo $category; ?>">
                 
                 <div class="form-group">
-                    <label for="date">Date: <span class="required">*</span></label>
+                    <label for="date">Дата: <span class="required">*</span></label>
                     <div class="date-picker">
                         <input type="text" id="date" name="date" class="form-input" value="<?php echo $date; ?>" readonly>
                         <div id="datePickerCalendar" class="date-picker-calendar">
@@ -307,35 +307,33 @@ $categories = [
                                 <div class="date-picker-nav" id="nextMonth">&gt;</div>
                             </div>
                             <div class="date-picker-grid" id="calendarGrid">
-                                <!-- Calendar will be rendered by JavaScript -->
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="amount">Amount: <span class="required">*</span></label>
+                    <label for="amount">Сума: <span class="required">*</span></label>
                     <input type="text" id="amount" name="amount" class="form-input" value="<?php echo $amount; ?>" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="comment">Comment:</label>
+                    <label for="comment">Коментар:</label>
                     <textarea id="comment" name="comment" class="form-input"><?php echo $comment; ?></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="category">Category: <span class="required">*</span></label>
+                    <label for="category">Категория: <span class="required">*</span></label>
                     <div class="dropup">
                         <button type="button" onclick="dropup()" class="dropbtn"><?php echo $category; ?></button>
                         <div id="Dropup" class="dropup-content">
-                            <!-- Categories will be populated by JavaScript -->
                         </div>
                     </div>
                 </div>
                 
                 <div class="form-actions">
-                    <a href="history.php" class="btn btn-outline">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="history.php" class="btn btn-outline">Откажете</a>
+                    <button type="submit" class="btn btn-primary">Запазете промените</button>
                 </div>
             </form>
         </div>

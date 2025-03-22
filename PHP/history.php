@@ -1,7 +1,5 @@
 <?php
 session_start();
-// mb_internal_encoding('UTF-8');
-// mb_http_output('UTF-8');
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.html"); 
@@ -127,7 +125,7 @@ $currentDay = date('d');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction History - DigiSpesti</title>
+    <title>История на транзакциите - DigiSpesti</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="modal.css">
     <style>
@@ -499,15 +497,16 @@ $currentDay = date('d');
     <header class="header">
         <div class="container">
             <div class="logo-container">
-                <img src="image.png" alt="DigiSpesti Logo">
+                <a href="./index.php"><img src="image.png" alt="DigiSpesti Logo"></a>
             </div>
             <nav class="nav">
-                <a href="index.php" class="nav-link">Dashboard</a>
-                <a href="history.php" class="nav-link">History</a>
-                <a href="#" class="nav-link">Savings</a>
-                <a href="plan_budget.php" class="nav-link">Plan your budget</a>
+                <a href="index.php" class="nav-link">Начална страница</a>
+                <a href="history.php" class="nav-link">Плащания</a>
+                <a href="savings.php" class="nav-link">Спестявания</a>
+                <a href="plan_budget.php" class="nav-link">Бюджет</a>
+                <a href="product_promotions.php" class="nav-link">Промоции</a>
                 <form action="logout.php" method="POST" style="display: inline; margin-left: 20px;">
-                    <button type="submit" class="btn btn-outline">Log out</button>
+                    <button type="submit" class="btn btn-outline">Излезте</button>
                 </form>
             </nav>
         </div>
@@ -534,10 +533,10 @@ $currentDay = date('d');
         
         <div class="dashboard-header">
             <div>
-                <h1>My Payments</h1>
-                <p>Track and manage your financial transactions</p>
+                <h1>Моите плащания</h1>
+                <p>Следете и контролирайте своите транзакции</p>
             </div>
-            <button class="btn btn-primary" id="addPaymentBtn">Add Payment</button>
+            <button class="btn btn-primary" id="addPaymentBtn">Добави плащане</button>
         </div>
 
         <div class="month-selector">
@@ -558,15 +557,14 @@ $currentDay = date('d');
                         $nextYear++;
                     }
                 ?>
-                <a href="?month=<?php echo $prevMonth; ?>&year=<?php echo $prevYear; ?>">&lt; Previous</a>
-                <a href="?month=<?php echo date('m'); ?>&year=<?php echo date('Y'); ?>">Current</a>
-                <a href="?month=<?php echo $nextMonth; ?>&year=<?php echo $nextYear; ?>">Next &gt;</a>
+                <a href="?month=<?php echo $prevMonth; ?>&year=<?php echo $prevYear; ?>">&lt; Предишен</a>
+                <a href="?month=<?php echo date('m'); ?>&year=<?php echo date('Y'); ?>">Сегашен</a>
+                <a href="?month=<?php echo $nextMonth; ?>&year=<?php echo $nextYear; ?>">Следващ &gt;</a>
             </div>
         </div>
 
         <div class="graph-container">
             <div class="graph-area" id="graphArea">
-                <!-- Graph will be rendered by JavaScript -->
             </div>
             <div class="graph-labels">
                 <div>day 1</div>
@@ -576,13 +574,13 @@ $currentDay = date('d');
         </div>
 
         <div class="filter-tabs">
-            <div class="filter-tab active" data-filter="all">All</div>
-            <div class="filter-tab" data-filter="income">Income</div>
-            <div class="filter-tab" data-filter="expense">Expenses</div>
-            <div class="filter-tab" data-filter="savings">Savings</div>
+            <div class="filter-tab active" data-filter="all">Всички</div>
+            <div class="filter-tab" data-filter="income">Приходи</div>
+            <div class="filter-tab" data-filter="expense">Разходи</div>
+            <div class="filter-tab" data-filter="savings">Спестявания</div>
             <div style="flex-grow: 1;"></div>
             <div class="search-box">
-                <input type="text" id="searchTransactions" placeholder="Search...">
+                <input type="text" id="searchTransactions" placeholder="Търсете...">
                 <button type="button">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -621,7 +619,7 @@ $currentDay = date('d');
                                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                                 </svg>
                             </a>
-                            <a href="delete_transaction.php?id=<?php echo $transaction['id']; ?>" class="transaction-action" onclick="return confirm('Are you sure you want to delete this transaction?');">
+                            <a href="delete_transaction.php?id=<?php echo $transaction['id']; ?>" class="transaction-action" onclick="return confirm('Сигурни ли сте, че искате да изтриете тази транзакция?');">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="3 6 5 6 21 6"></polyline>
                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -632,8 +630,8 @@ $currentDay = date('d');
                 <?php endwhile; ?>
             <?php else: ?>
                 <div style="text-align: center; padding: 32px;">
-                    <p>No transactions found for this month.</p>
-                    <button class="btn btn-primary" id="addFirstTransactionBtn">Add Your First Transaction</button>
+                    <p>Няма намерени транзакции за този месец.</p>
+                    <button class="btn btn-primary" id="addFirstTransactionBtn">Добавете своята първа транзакция</button>
                 </div>
             <?php endif; ?>
         </div>
@@ -643,13 +641,13 @@ $currentDay = date('d');
     <div id="paymentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>ADD</h2>
+                <h2>Добави</h2>
                 <span class="close-modal">&times;</span>
             </div>
             <div class="modal-tabs">
-                <button class="tab-btn active" data-tab="income">INCOME</button>
-                <button class="tab-btn" data-tab="expense">EXPENSE</button>
-                <button class="tab-btn" data-tab="savings">SAVING</button>
+                <button class="tab-btn active" data-tab="income">Приходи</button>
+                <button class="tab-btn" data-tab="expense">Разходи</button>
+                <button class="tab-btn" data-tab="savings">Спестявания</button>
             </div>
             <div class="modal-body">
                 <form id="paymentForm" action="process_transaction.php" method="POST">
@@ -658,7 +656,7 @@ $currentDay = date('d');
                     <input type="hidden" name="redirect" value="history.php?month=<?php echo $currentMonth; ?>&year=<?php echo $currentYear; ?>">
                     
                     <div class="form-group">
-                        <label for="date">Date: <span class="required">*</span></label>
+                        <label for="date">Дата: <span class="required">*</span></label>
                         <div class="date-picker">
                             <input type="text" id="date" name="date" class="form-input" value="<?php echo date('d F Y'); ?>" readonly>
                             <div id="datePickerCalendar" class="date-picker-calendar">
@@ -668,34 +666,33 @@ $currentDay = date('d');
                                     <div class="date-picker-nav" id="nextMonth">&gt;</div>
                                 </div>
                                 <div class="date-picker-grid" id="calendarGrid">
-                                    <!-- Calendar will be rendered by JavaScript -->
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="amount">Amount: <span class="required">*</span></label>
-                        <input type="text" id="amount" name="amount" class="form-input" placeholder="Example: 100.00" required>
+                        <label for="amount">Сума: <span class="required">*</span></label>
+                        <input type="text" id="amount" name="amount" class="form-input" placeholder="Пример: 100.00" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="comment">Comment:</label>
-                        <textarea id="comment" name="comment" class="form-input" placeholder="Example: Electricity bill"></textarea>
+                        <label for="comment">Коментар:</label>
+                        <textarea id="comment" name="comment" class="form-input" placeholder="Пример: Сметка за ток"></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label for="category">Category: <span class="required">*</span></label>
+                        <label for="category">Категория: <span class="required">*</span></label>
                         <div class="dropup">
-                            <button type="button" onclick="dropup()" class="dropbtn">Select category</button>
+                            <button type="button" onclick="dropup()" class="dropbtn">Изберете категория: </button>
                             <div id="Dropup" class="dropup-content">
-                                <!-- Categories will be populated by JavaScript -->
+
                             </div>
                         </div>
                     </div>
                     
                     <div class="form-group" style="margin-top: 20px;">
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">Save</button>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Запазете</button>
                     </div>
                 </form>
             </div>
@@ -832,7 +829,7 @@ $currentDay = date('d');
                 const grid = document.getElementById('calendarGrid');
                 grid.innerHTML = '';
                 
-                const weekdays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+                const weekdays = ['Нед', 'Пон', 'Вт', 'Ср', 'Чет', 'Пет', 'Съб'];
                 weekdays.forEach(day => {
                     const dayElement = document.createElement('div');
                     dayElement.className = 'date-picker-weekday';
@@ -944,17 +941,17 @@ $currentDay = date('d');
             const paymentForm = document.getElementById('paymentForm');
             
             const categories = {
-                income: ['Salary', 'Previous month balance'],
-                expense: ['Utilities', 'Housing', 'Groceries', 'Transport', 'Car', 'Kids', 'Clothing', 
-                         'Personal', 'Cigarettes & alcohol', 'Fun', 'Eating out', 'Education', 
-                         'Gifts', 'Sport/Hobby', 'Travel/Leisure', 'Medical', 'Pets', 'Miscellaneous'],
-                savings: ['Emergency Fund', 'Retirement', 'Vacation', 'Education', 'Home Purchase']
+                income: ['Заплата', 'Баланс от предишен месец'],
+                expense: ['Битови сметки', 'Жилище', 'Покупки', 'Транспорт', 'Автомобил', 'Деца', 'Облекло', 
+                         'Лични', 'Цигари & алкохол', 'Забавления', 'Расторанти & Заведения', 'Образование', 
+                         'Подаръци', 'Спорт/Хоби', 'Пътувания/Почивки', 'Здраве', 'Домашни любимци', 'Други'],
+                savings: ['Спешни спестявания', 'Пенсионерство', 'Ваканции', 'Образование', 'Покупка на жилище']
             };
             
             if (addPaymentBtn) {
                 addPaymentBtn.addEventListener('click', function() {
                     modal.style.display = 'flex';
-                    updateCategoryDropdown('income'); // Default to income tab
+                    updateCategoryDropdown('income');
                 });
             }
             
@@ -1042,7 +1039,7 @@ $currentDay = date('d');
                         
                         const dropBtn = document.querySelector('.dropbtn');
                         if (dropBtn) {
-                            dropBtn.textContent = 'Select category';
+                            dropBtn.textContent = 'Изберете категория';
                         }
                         if (selectedCategoryInput) {
                             selectedCategoryInput.value = '';
@@ -1055,7 +1052,7 @@ $currentDay = date('d');
                 paymentForm.addEventListener('submit', function(e) {
                     if (selectedCategoryInput && !selectedCategoryInput.value) {
                         e.preventDefault();
-                        alert('Please select a category!');
+                        alert('Моля изберете категория!');
                     }
                 });
             }
@@ -1082,7 +1079,7 @@ $currentDay = date('d');
                         
                         const alertDiv = document.createElement('div');
                         alertDiv.className = 'alert alert-success';
-                        alertDiv.textContent = 'Budget plan updated successfully!';
+                        alertDiv.textContent = 'Бюджетният план е актуализиран успешно!';
                         
                         const dashboard = document.querySelector('.dashboard');
                         if (dashboard) {
@@ -1094,7 +1091,7 @@ $currentDay = date('d');
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        console.error('Възникна грешка:', error);
                     });
                 });
             }

@@ -338,15 +338,16 @@ $currentDay = date('d');
     <header class="header">
         <div class="container">
             <div class="logo-container">
-                <img src="image.png" alt="DigiSpesti Logo">
+                <a href="./index.php"><img src="image.png" alt="DigiSpesti Logo"></a>
             </div>
             <nav class="nav">
-              <a href="index.php" class="nav-link">Dashboard</a>
-              <a href="history.php" class="nav-link">History</a>
-              <a href="#" class="nav-link">Savings</a>
-              <a href="plan_budget.php" class="nav-link">Plan your budget</a>
+              <a href="index.php" class="nav-link">Начална страница</a>
+              <a href="history.php" class="nav-link">Плащания</a>
+              <a href="savings.php" class="nav-link">Спестявания</a>
+              <a href="plan_budget.php" class="nav-link">Бюджет</a>
+              <a href="product_promotions.php" class="nav-link">Промоции</a>
               <form action="logout.php" method="POST" style="display: inline; margin-left: 20px;">
-              <button type="submit" class="btn btn-outline">Log out</button>
+              <button type="submit" class="btn btn-outline">Излезте</button>
             </form>
           </nav>
         </div>
@@ -373,15 +374,15 @@ $currentDay = date('d');
         
         <div class="dashboard-header">
             <div>
-                <h1>Welcome back, <?php echo htmlspecialchars($username); ?>!</h1>
-                <p>Here's an overview of your financial health for <?php echo $currentMonthName; ?></p>
+                <h1>Добре дошъл, <?php echo htmlspecialchars($username); ?>!</h1>
+                <p>Това е преглед на финансовото Ви състояние за <?php echo $currentMonthName; ?></p>
             </div>
             <button class="btn btn-primary" id="addPaymentBtn">Добави плащане</button>
         </div>
 
         <div class="stats-grid stats-grid-two">
             <div class="stat-card">
-                <div class="stat-title">Total Balance</div>
+                <div class="stat-title">Тотален баланс</div>
                 <div class="stat-value" id="totalBalance">
                     <?php echo number_format($currentBalance, 2); ?> лв.
                 </div>
@@ -391,13 +392,13 @@ $currentDay = date('d');
                     <?php elseif ($balanceChange < 0): ?>
                         <span class="negative-change"><?php echo number_format($balanceChange, 2); ?> лв.</span> from <?php echo $previousMonthName; ?>
                     <?php else: ?>
-                        No change from <?php echo $previousMonthName; ?>
+                        Няма промяна от <?php echo $previousMonthName; ?>
                     <?php endif; ?>
                 </div>
             </div>
             
             <div class="stat-card">
-                <div class="stat-title">Savings Rate</div>
+                <div class="stat-title">Оценка на спестяванията</div>
                 <div class="stat-value"><?php echo number_format($savingsRate, 1); ?>%</div>
                 <div class="stat-description">
                     <?php if ($savingsRateChange > 0): ?>
@@ -413,13 +414,13 @@ $currentDay = date('d');
 
         <div style="display: flex; flex-wrap: wrap; gap: 24px;">
             <div class="card card-premium" style="flex: 2; min-width: 300px;">
-                <h2>Spending Overview</h2>
-                <p>Your spending patterns for <?php echo $currentMonthName; ?></p>
+                <h2>Преглед на разходите</h2>
+                <p>Състояние на разходите <?php echo $currentMonthName; ?></p>
                 <div class="graph-container" style="height: 300px; border-radius: 8px; overflow: hidden; margin-bottom: 0;">
                     <div class="graph-area" id="graphArea">
                     </div>
                     <div class="graph-labels">
-                        <div>day 1</div>
+                        <div>Ден 1</div>
                         <div id="currentDayLabel"><?php echo date('d'); ?></div>
                         <div><?php echo date('t'); ?></div>
                     </div>
@@ -427,8 +428,8 @@ $currentDay = date('d');
             </div>
             
             <div class="card card-premium" style="flex: 1; min-width: 300px;">
-                <h2>Financial Tips</h2>
-                <p>Smart advice to improve your financial health</p>
+                <h2>Финансови съвети</h2>
+                <p>Съвети, които биха подобрили финансовата Ви грамотност</p>
                 
                 <div id="tips-container">
                 </div>
@@ -463,7 +464,6 @@ $currentDay = date('d');
                                     <div class="date-picker-nav" id="nextMonth">&gt;</div>
                                 </div>
                                 <div class="date-picker-grid" id="calendarGrid">
-                                    <!-- Calendar will be rendered by JavaScript -->
                                 </div>
                             </div>
                         </div>
@@ -510,13 +510,12 @@ $currentDay = date('d');
         const selectedCategoryInput = document.getElementById('selectedCategory');
         const paymentForm = document.getElementById('paymentForm');
         
-        // Category options for each tab
         const categories = {
-            income: ['Salary', 'Previous month balance'],
-            expense: ['Utilities', 'Housing', 'Groceries', 'Transport', 'Car', 'Kids', 'Clothing', 
-                     'Personal', 'Cigarettes & alcohol', 'Fun', 'Eating out', 'Education', 
-                     'Gifts', 'Sport/Hobby', 'Travel/Leisure', 'Medical', 'Pets', 'Miscellaneous'],
-            savings: ['Emergency Fund', 'Retirement', 'Vacation', 'Education', 'Home Purchase']
+            income: ['Заплата', 'Баланс от предходен месец'],
+            expense: ['Битови сметки', 'Жилище', 'Храна и консумативи', 'Транспорт', 'Автомобил', 'Деца', 'Дрехи и обувки', 
+                     'Лични', 'Цигари и алкохол', 'Развлечения', 'Хранене навън', 'Образование', 
+                     'Подаръци', 'Спорт/Хоби', 'Пътуване/Отдих', 'Медицински', 'Домашни любимци', 'Разни'],
+            savings: ['Непредвидени разходи', 'Пенсиониране', 'Ваканция', 'Образование', 'Купуване на къща']
         };
         
         class DatePicker {
@@ -615,7 +614,7 @@ $currentDay = date('d');
         
         addPaymentBtn.addEventListener('click', function() {
             modal.style.display = 'flex';
-            updateCategoryDropdown('income'); // Default to income tab
+            updateCategoryDropdown('income');
         });
 
         closeModal.addEventListener('click', function() {
@@ -702,66 +701,67 @@ $currentDay = date('d');
         
         const financialTips = [
             {
-                title: "50/30/20 Budget Rule",
-                description: "Allocate 50% of your income to needs, 30% to wants, and 20% to savings and debt repayment."
+                title: "Правило 50/30/20 за бюджета",
+                description: "Разпределете 50% от доходите си за нужди, 30% за желания и 20% за спестявания и изплащане на дългове."
             },
             {
-                title: "Emergency Fund First",
-                description: "Build an emergency fund covering 3-6 months of expenses before focusing on other financial goals."
+                title: "Първо изградете авариен фонд",
+                description: "Натрупайте авариен фонд, покриващ 3-6 месеца разходи, преди да се фокусирате върху други финансови цели."
             },
             {
-                title: "Pay Yourself First",
-                description: "Set up automatic transfers to your savings account on payday before spending on other expenses."
+                title: "Плащайте първо на себе си",
+                description: "Настройте автоматични преводи към спестовната си сметка в деня на заплата, преди да харчите за други разходи."
             },
             {
-                title: "Eliminate High-Interest Debt",
-                description: "Focus on paying off high-interest debt first, such as credit cards, to save money in the long run."
+                title: "Елиминирайте дълговете с висока лихва",
+                description: "Първо изплатете дълговете с висока лихва, като кредитни карти, за да спестите пари в дългосрочен план."
             },
             {
-                title: "Track Your Spending",
-                description: "Monitor where your money goes for at least one month to identify areas where you can cut back."
+                title: "Следете разходите си",
+                description: "Наблюдавайте къде отиват парите ви поне за един месец, за да откриете области, в които можете да намалите разходите."
             },
             {
-                title: "Use the 24-Hour Rule",
-                description: "Wait 24 hours before making non-essential purchases to avoid impulse buying."
+                title: "Правило 24 часа",
+                description: "Изчакайте 24 часа, преди да направите ненужна покупка, за да избегнете импулсивното пазаруване."
             },
             {
-                title: "Automate Your Finances",
-                description: "Set up automatic bill payments and savings transfers to ensure consistency and avoid late fees."
-            },
-            {
-                title: "Negotiate Bills Annually",
-                description: "Call service providers yearly to negotiate better rates on recurring bills like internet and insurance."
-            },
-            {
-                title: "Invest Early and Often",
-                description: "Take advantage of compound interest by starting to invest as early as possible, even with small amounts."
-            },
-            {
-                title: "Cook at Home",
-                description: "Prepare meals at home instead of eating out to save significantly on food expenses."
-            },
-            {
-                title: "Use Cash for Discretionary Spending",
-                description: "Pay with cash for non-essential purchases to become more mindful of your spending habits."
-            },
-            {
-                title: "Review Subscriptions Quarterly",
-                description: "Audit your subscriptions every three months and cancel those you don't regularly use."
-            },
-            {
-                title: "Buy Used for Big Purchases",
-                description: "Consider buying quality used items for big purchases like cars and furniture to avoid depreciation."
-            },
-            {
-                title: "Increase Retirement Contributions",
-                description: "Boost your retirement contributions by 1% each year to build your nest egg without feeling the pinch."
-            },
-            {
-                title: "Use Tax-Advantaged Accounts",
-                description: "Maximize contributions to tax-advantaged accounts like 401(k)s and IRAs to reduce your tax burden."
-            }
-        ];
+                title: "Автоматизирайте финансите си",
+                description: "Настройте автоматично плащане на сметки и преводи към спестявания, за да осигурите последователност и да избегнете закъснели такси."
+        },
+        {
+            title: "Преговаряйте за сметките си веднъж годишно",
+            description: "Обаждайте се на доставчиците на услуги всяка година, за да договорите по-добри цени за редовни разходи като интернет и застраховки."
+        },
+        {
+            title: "Инвестирайте рано и редовно",
+            description: "Възползвайте се от сложната лихва, като започнете да инвестирате възможно най-рано, дори с малки суми."
+        },
+        {
+            title: "Гответе у дома",
+            description: "Приготвяйте храната си у дома вместо да се храните навън, за да спестите значително от хранителни разходи."
+        },
+        {
+            title: "Използвайте пари в брой за несъществени разходи",
+            description: "Плащайте с пари в брой за ненужни покупки, за да станете по-съзнателни за разходите си."
+        },
+        {
+            title: "Преглеждайте абонаментите си на всеки три месеца",
+            description: "Проверявайте абонаментите си на всеки три месеца и анулирайте тези, които не използвате редовно."
+        },
+        {
+            title: "Купувайте втора употреба за големи покупки",
+            description: "Помислете за покупка на качествени употребявани вещи като коли и мебели, за да избегнете загубата от амортизация."
+        },
+        {
+            title: "Увеличавайте вноските за пенсия",
+            description: "Увеличавайте пенсионните си вноски с 1% всяка година, за да изградите спестяванията си, без да го усещате осезаемо."
+        },
+        {
+            title: "Използвайте данъчно облекчени сметки",
+            description: "Максимизирайте вноските си в данъчно облекчени сметки като 401(k) и IRA, за да намалите данъчната си тежест."
+        }
+    ];
+
         
         function getRandomTips(tipsArray, count) {
             const tipsCopy = [...tipsArray];
@@ -770,7 +770,7 @@ $currentDay = date('d');
             for (let i = 0; i < count && tipsCopy.length > 0; i++) {
                 const randomIndex = Math.floor(Math.random() * tipsCopy.length);
                 selectedTips.push(tipsCopy[randomIndex]);
-                tipsCopy.splice(randomIndex, 1); // Remove the selected tip to avoid duplicates
+                tipsCopy.splice(randomIndex, 1);
             }
             
             return selectedTips;

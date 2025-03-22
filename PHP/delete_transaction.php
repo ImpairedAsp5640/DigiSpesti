@@ -41,9 +41,9 @@ $stmt = $conn->prepare($deleteQuery);
 $stmt->bind_param("ii", $transactionId, $userId);
 
 if ($stmt->execute()) {
-    $_SESSION['success'] = "Transaction deleted successfully.";
+    $_SESSION['success'] = "Транзакцията е успешно изтрита";
 } else {
-    $_SESSION['error'] = "Error deleting transaction: " . $conn->error;
+    $_SESSION['error'] = "Грешка при изтриването на транзакцията: " . $conn->error;
 }
 
 header("Location: history.php?month=$month&year=$year");

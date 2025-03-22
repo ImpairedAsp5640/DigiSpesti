@@ -39,7 +39,7 @@ if (isset($success)) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Registration Success - WealthWise</title>
+        <title>Registration Success - DigiSpesti</title>
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
@@ -81,9 +81,10 @@ if (isset($success)) {
     <body>
         <header class="header">
             <div class="container">
-                <div class="logo">
-                    <div class="logo-icon">$</div>
-                    <span>WealthWise</span>
+                <div class="logo-container">
+                  <img src="image.png" alt="DigiSpesti Logo">
+                </div>
+                    <span>DigiSpesti</span>
                 </div>
                 <nav class="nav">
                     <a href="login.html" class="nav-link">Login</a>

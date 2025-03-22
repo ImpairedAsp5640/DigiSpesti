@@ -61,7 +61,7 @@ $stmt = $conn->prepare($updateQuery);
 $stmt->bind_param("ssdssis", $transactionType, $category, $amount, $comment, $formattedDate, $transactionId, $userId);
 
 if ($stmt->execute()) {
-    $_SESSION['success'] = "Transaction updated successfully.";
+    $_SESSION['success'] = "Транзакцията е редактирана успешно.";
 } else {
     $_SESSION['error'] = "Error updating transaction: " . $conn->error;
 }
