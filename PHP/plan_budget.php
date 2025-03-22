@@ -530,7 +530,10 @@ while ($row = $warningsResult->fetch_assoc()) {
                 <a href="history.php" class="nav-link">Плащания</a>
                 <a href="savings.php" class="nav-link">Спестявания</a>
                 <a href="plan_budget.php" class="nav-link">Бюджет</a>
+<<<<<<< HEAD
                 <a href="product_promotions.php" class="nav-link">Промоции</a>
+=======
+>>>>>>> 1dabd120ff1260728edbff6ee42ddc860d54d5df
                 <form action="logout.php" method="POST" style="display: inline; margin-left: 20px;">
                     <button type="submit" class="btn btn-outline">Излизане</button>
                 </form>
@@ -560,7 +563,11 @@ while ($row = $warningsResult->fetch_assoc()) {
         <div class="dashboard-header">
             <div>
                 <h1>Моят бюджет</h1>
+<<<<<<< HEAD
                 <p>Планирайте и следете месечния си баланс</p>
+=======
+                <p>Планирайте и следете месечния Ви бюджет</p>
+>>>>>>> 1dabd120ff1260728edbff6ee42ddc860d54d5df
             </div>
             <button class="btn btn-primary" id="editBudgetBtn">Промени бюджета си</button>
         </div>
@@ -576,7 +583,11 @@ while ($row = $warningsResult->fetch_assoc()) {
             <?php foreach ($warnings as $warning): ?>
             <div class="warning-item">
                 <div>
+<<<<<<< HEAD
                     <strong>Внимание:</strong> Вие сте похарчили <?php echo number_format($warning['spent_amount'], 2); ?> от <?php echo $warning['category']; ?> 
+=======
+                    <strong>Внимание:</strong> Вие сте похарчили <?php echo number_format($warning['spent_amount'], 2); ?> on <?php echo $warning['category']; ?> 
+>>>>>>> 1dabd120ff1260728edbff6ee42ddc860d54d5df
                     (<?php echo round(($warning['spent_amount'] / $warning['planned_amount']) * 100); ?>% от бюджета Ви).
                     Остават: <?php echo number_format($warning['remaining'], 2); ?>
                 </div>
@@ -642,7 +653,11 @@ while ($row = $warningsResult->fetch_assoc()) {
                         </div>
                         <div class="budget-item-amount">
                             <input type="text" name="income[<?php echo $category; ?>]" value="<?php echo $amount; ?>" readonly data-category="<?php echo $category; ?>" class="income-input">
+<<<<<<< HEAD
                             <button type="button" class="edit-btn">редактирай</button>
+=======
+                            <button type="button" class="edit-btn">поправете</button>
+>>>>>>> 1dabd120ff1260728edbff6ee42ddc860d54d5df
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -669,7 +684,11 @@ while ($row = $warningsResult->fetch_assoc()) {
                         </div>
                         <div class="budget-item-amount">
                             <input type="text" name="expense[<?php echo $category; ?>]" value="<?php echo $amount; ?>" readonly data-category="<?php echo $category; ?>" class="expense-input">
+<<<<<<< HEAD
                             <button type="button" class="edit-btn">редактирай</button>
+=======
+                            <button type="button" class="edit-btn">поправете</button>
+>>>>>>> 1dabd120ff1260728edbff6ee42ddc860d54d5df
                         </div>
                     </div>
                     <?php endforeach; ?>
