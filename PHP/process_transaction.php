@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_SESSION['user_id'];
     $redirect = $_POST['redirect'] ?? 'index.php';
     
-    if ($transactionType === 'savings' && $category === 'Emergency Fund' && empty($amount)) {
+    if ($transactionType === 'savings' && $category === 'Непредвидени разходи' && empty($amount)) {
         $amount = 0;
         
         if (empty($comment)) {
@@ -30,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $amount = str_replace(',', '.', $amount); 
     $amount = floatval($amount);
 
-    if (!($transactionType === 'savings' && $category === 'Emergency Fund' && $amount === 0) && $amount <= 0) {
-        $_SESSION['error'] = "Please enter a valid amount greater than zero.";
+    if (!($transactionType === 'savings' && $category === 'Непредвидени разходи' && $amount === 0) && $amount <= 0) {
+        $_SESSION['error'] = "Моля въведете число, по-голямо от 0.";
         header("Location: $redirect");
         exit();
     }

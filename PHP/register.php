@@ -49,17 +49,17 @@ if (isset($success)) {
                   <img src="image.png" alt="DigiSpesti Logo">
                 </div>
                 <nav class="nav">
-                    <a href="login.html" class="nav-link">Login</a>
+                    <a href="login.html" class="nav-link">Влезте</a>
                 </nav>
             </div>
         </header>
 
         <main class="container">
             <div class="form-container">
-                <h1 class="text-center">Registration Successful!</h1>
-                <p class="text-center">Your account has been created successfully.</p>
+                <h1 class="text-center">Успешна регистрация!</h1>
+                <p class="text-center">Вашият акаунт е направен успешно.</p>
                 <div class="text-center" style="margin-top: 24px;">
-                    <a href="login.html" class="btn btn-primary">Login Now</a>
+                    <a href="login.html" class="btn btn-primary">Влезте сега</a>
                 </div>
             </div>
         </main>

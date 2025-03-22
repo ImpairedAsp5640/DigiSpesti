@@ -702,7 +702,7 @@ if ($savingsGoals->num_rows > 0) {
                                         Преведи
                                     </button>
                                     <button class="emergency-fund-btn" data-goal-id="<?php echo $goal['id']; ?>" data-goal-name="<?php echo htmlspecialchars($goal['name']); ?>">
-                                        Спешни спестяване
+                                        Непредвидени разходи
                                     </button>
                                 <?php else: ?>
                                     <button class="delete-btn" data-goal-id="<?php echo $goal['id']; ?>" data-goal-name="<?php echo htmlspecialchars($goal['name']); ?>">
@@ -876,7 +876,7 @@ if ($savingsGoals->num_rows > 0) {
     <div id="emergencyFundModal" class="goal-modal">
         <div class="goal-modal-content">
             <div class="goal-modal-header">
-                <h2>Използвай спешните спестявания за <span id="emergencyFundGoalName"></span></h2>
+                <h2>Използвай непредвидените разходи за <span id="emergencyFundGoalName"></span></h2>
                 <span class="close-modal" id="closeEmergencyFundModal">&times;</span>
             </div>
             <div class="goal-modal-body">

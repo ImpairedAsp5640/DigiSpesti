@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $goalCategory = $goalData['name'];
             
             $emergencyFundQuery = "SELECT SUM(amount) as total FROM transactions 
-                                  WHERE user_id = ? AND type = 'savings' AND category = 'Emergency Fund'";
+                                  WHERE user_id = ? AND type = 'savings' AND category = 'Непредвидени разходи'";
             $stmt = $conn->prepare($emergencyFundQuery);
             $stmt->bind_param("i", $userId);
             $stmt->execute();
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 try {
                     $withdrawalComment = empty($comment) ? "Transfer to " . $goalCategory : $comment;
                     $insertWithdrawalQuery = "INSERT INTO transactions (user_id, type, category, amount, comment, transaction_date) 
-                                            VALUES (?, 'savings', 'Emergency Fund', ?, ?, NOW())";
+                                            VALUES (?, 'savings', 'Непредвидени разходи', ?, ?, NOW())";
                     $negativeAmount = -1 * $amount; 
                     $stmt = $conn->prepare($insertWithdrawalQuery);
                     $stmt->bind_param("ids", $userId, $negativeAmount, $withdrawalComment);
@@ -55,19 +55,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     $conn->commit();
                     
-                    $_SESSION['success'] = "Successfully transferred " . number_format($amount, 2) . " лв. from Emergency Fund to " . $goalCategory;
+                    $_SESSION['success'] = "Успешно прехвърлени " . number_format($amount, 2) . " лв. от Непредвидени разходи към " . $goalCategory;
                 } catch (Exception $e) {
                     $conn->rollback();
                     $_SESSION['error'] = "Error: " . $e->getMessage();
                 }
             } else {
-                $_SESSION['error'] = "Insufficient funds in Emergency Fund. Available: " . number_format($emergencyTotal, 2) . " лв.";
+                $_SESSION['error'] = "Недостатъчна наличност в Непредвидени разходи. Оставащи: " . number_format($emergencyTotal, 2) . " лв.";
             }
         } else {
-            $_SESSION['error'] = "Invalid savings goal.";
+            $_SESSION['error'] = "Невалидна цел за спестяване.";
         }
     } else {
-        $_SESSION['error'] = "Please provide a valid amount.";
+        $_SESSION['error'] = "Моля, въведете валидна сума.";
     }
     
     header("Location: savings.php");
